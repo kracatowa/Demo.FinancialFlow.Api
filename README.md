@@ -10,3 +10,12 @@ A closely related reference project by Microsoft is [eShopOnContainers](https://
 
 For more details and documentation, see:  
 https://github.com/dotnet/eShop
+
+## Persistence
+A relational SQL database is used for data persistence.
+
+## Project Structure
+
+- **Demo.FinancialFlow.Api**: The main entry point of the application, containing controllers and API-related configurations.
+- **Demo.FinancialFlow.Domain : Contains the core business logic, domain entities, value objects, and domain services.
+- **Demo.FinancialFlow.Infrastructure**: Connect to the infrastructure layer, including data access, external services, and other technical implementations.
