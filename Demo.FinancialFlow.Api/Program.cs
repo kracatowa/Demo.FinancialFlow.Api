@@ -34,6 +34,16 @@ namespace Demo.FinancialFlow.Api
 
             builder.Services.AddHostedService<MigrationHostedService<FinancialFlowContext>>();
 
+            builder.Services.AddScoped<IFileProcessor, FileProcessingService>();
+            builder.Services.AddScoped<FileProcessorFactory>();
+            builder.Services.AddScoped<ProcessCsvFinancialFlow>();
+            builder.Services.AddScoped<IFinancialFlowRepository, SqlFinancialFlowRepository>();
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblyContaining<Program>();
+            });
+
             var app = builder.Build();
 
             app.UseHttpsRedirection();
