@@ -1,3 +1,4 @@
+using Demo.FinancialFlow.Api.Services;
 using Demo.FinancialFlow.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,8 @@ namespace Demo.FinancialFlow.Api
                     options.EnableDetailedErrors();
                 }
             });
+
+            builder.Services.AddHostedService<MigrationHostedService>();
 
             var app = builder.Build();
 
