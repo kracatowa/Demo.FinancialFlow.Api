@@ -17,5 +17,18 @@ A relational SQL database is used for data persistence.
 ## Project Structure
 
 - **Demo.FinancialFlow.Api**: The main entry point of the application, containing controllers and API-related configurations.
-- **Demo.FinancialFlow.Domain : Contains the core business logic, domain entities, value objects, and domain services.
+- **Demo.FinancialFlow.Domain** : Contains the core business logic, domain entities, value objects, and domain services.
 - **Demo.FinancialFlow.Infrastructure**: Connect to the infrastructure layer, including data access, external services, and other technical implementations.
+
+## API Endpoints
+
+### Health Check
+`GET /api/financialflow/health`
+- Returns: `true` if the service is healthy.
+- Only for testing purposes
+
+### Upload Financial Flow File
+`POST /api/financialflow/upload`
+- Body: `multipart/form-data` with a file field named `File`
+- Accepts: `.csv` files up to 10MB
+- Returns: `true` on success, error message otherwise
