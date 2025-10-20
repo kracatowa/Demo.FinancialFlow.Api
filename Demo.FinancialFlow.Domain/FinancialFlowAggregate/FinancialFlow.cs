@@ -1,6 +1,6 @@
 ﻿using Demo.FinancialFlow.Domain.Seedwork;
 
-namespace Demo.FinancialFlow.Domain
+namespace Demo.FinancialFlow.Domain.FinancialFlowAggregate
 {
     public class FinancialFlow : Entity
     {
