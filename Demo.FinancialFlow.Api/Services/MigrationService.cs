@@ -16,7 +16,7 @@ namespace Demo.FinancialFlow.Api.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Database migration failed.");
+                logger.LogError(ex, "Database migration failed. Verify connection string and ensure the database server is accessible.");
             }
         }
 
