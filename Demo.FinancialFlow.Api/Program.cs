@@ -32,7 +32,7 @@ namespace Demo.FinancialFlow.Api
                 }
             });
 
-            builder.Services.AddHostedService<MigrationHostedService>();
+            builder.Services.AddHostedService<MigrationHostedService<FinancialFlowContext>>();
 
             var app = builder.Build();
 

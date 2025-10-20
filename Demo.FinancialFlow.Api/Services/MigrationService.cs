@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Demo.FinancialFlow.Api.Services
 {
-    public class MigrationHostedService(IServiceProvider serviceProvider, ILogger<MigrationHostedService> logger) : IHostedService
+    public class MigrationHostedService<T> (IServiceProvider serviceProvider, ILogger<MigrationHostedService<T>> logger) : IHostedService where T : DbContext  
     {
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             using var scope = serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<FinancialFlowContext>();
+            var dbContext = scope.ServiceProvider.GetRequiredService<T>();
             try
             {
                 await dbContext.Database.MigrateAsync(cancellationToken);
