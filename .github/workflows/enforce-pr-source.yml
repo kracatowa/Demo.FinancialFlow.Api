@@ -17,6 +17,6 @@ jobs:
           fi
 
           if [[ "${{ github.event.pull_request.head.ref }}" != "develop" ]]; then
-            echo "::error::Pull requests into 'master' must originate from 'develop' or a 'feature/*' branch."
+            echo "::error::Pull requests into 'master' must originate from 'develop'"
             exit 1
           fi
