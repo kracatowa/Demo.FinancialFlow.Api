@@ -1,4 +1,4 @@
-﻿namespace Demo.FinancialFlow.Domain
+﻿namespace Demo.FinancialFlow.Domain.FinancialFlowAggregate
 {
     public enum FlowType
     {

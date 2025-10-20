@@ -1,5 +1,7 @@
 using Demo.FinancialFlow.Api.Services;
+using Demo.FinancialFlow.Api.Services.File;
 using Demo.FinancialFlow.Infrastructure;
+using Demo.FinancialFlow.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.FinancialFlow.Api
@@ -11,6 +13,7 @@ namespace Demo.FinancialFlow.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
+            builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<FinancialFlowContext>(options =>
             {
@@ -34,6 +37,16 @@ namespace Demo.FinancialFlow.Api
 
             builder.Services.AddHostedService<MigrationHostedService<FinancialFlowContext>>();
 
+            builder.Services.AddScoped<IFileProcessor, FileProcessingService>();
+            builder.Services.AddScoped<FileProcessorFactory>();
+            builder.Services.AddScoped<ProcessCsvFinancialFlow>();
+            builder.Services.AddScoped<IFinancialFlowRepository, SqlFinancialFlowRepository>();
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblyContaining<Program>();
+            });
+
             var app = builder.Build();
 
             app.UseHttpsRedirection();
@@ -41,6 +54,9 @@ namespace Demo.FinancialFlow.Api
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.Run();
         }
