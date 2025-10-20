@@ -1,0 +1,22 @@
+name: Enforce Pull Request Source Branch
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check_source_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if source branch is develop
+        run: |
+          if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+            echo "::error::Pull requests into 'master' must originate from the same repository."
+            exit 1
+          fi
+
+          if [[ "${{ github.event.pull_request.head.ref }}" != "develop" ]]; then
+            echo "::error::Pull requests into 'master' must originate from 'develop'"
+            exit 1
+          fi
