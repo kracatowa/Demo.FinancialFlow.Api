@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Demo.FinancialFlow.Infrastructure.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Demo.FinancialFlow.Infrastructure
 {
@@ -8,10 +9,13 @@ namespace Demo.FinancialFlow.Infrastructure
     /// <param name="options"></param>
     public class FinancialFlowContext(DbContextOptions<FinancialFlowContext> dbContextOptions) : DbContext(dbContextOptions)
     {
+        public DbSet<Domain.FinancialFlow> FinancialFlows { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new FinancialFlowConfiguration());
             modelBuilder.HasDefaultSchema("demo");
         }
 
