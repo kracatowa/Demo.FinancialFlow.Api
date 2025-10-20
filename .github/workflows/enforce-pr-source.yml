@@ -1,0 +1,17 @@
+name: Enforce Pull Request Source Branch
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check_source_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if source branch is develop
+        run: |
+          if [[ "${{ github.head_ref }}" != "develop" ]]; then
+            echo "Error: Pull requests into 'master' must originate from the 'develop' branch."
+            exit 1
+          fi
