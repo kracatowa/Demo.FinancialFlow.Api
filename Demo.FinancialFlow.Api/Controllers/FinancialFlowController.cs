@@ -7,9 +7,15 @@ namespace Demo.FinancialFlow.Api.Controllers
     public class FinancialFlowController(FinancialFlowContext dbContext): ControllerBase
     {
         [HttpGet("health")]
-        public ActionResult<bool> HealthCheck()
+        public async Task<ActionResult<bool>> HealthCheckAsync()
         {
-            return Ok(dbContext.Database.CanConnect());
+            // TODO : REMOVE AFTER INITIAL TEST PHASE
+
+            //dbContext.FinancialFlows.Add(new Domain.FinancialFlow(100.0f, DateTime.UtcNow, "test123", Domain.FlowType.Past, "testsub123"));
+
+            //await dbContext.SaveChangesAsync();
+
+            return Ok(true);
         }
     }
 }
