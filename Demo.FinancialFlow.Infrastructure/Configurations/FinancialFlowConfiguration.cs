@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Demo.FinancialFlow.Domain.FinancialFlowAggregate;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Demo.FinancialFlow.Infrastructure.Configurations
 {
-    public class FinancialFlowConfiguration : IEntityTypeConfiguration<Domain.FinancialFlow>
+    public class FinancialFlowConfiguration : IEntityTypeConfiguration<Domain.FinancialFlowAggregate.FinancialFlow>
     {
-        public void Configure(EntityTypeBuilder<Domain.FinancialFlow> builder)
+        public void Configure(EntityTypeBuilder<Domain.FinancialFlowAggregate.FinancialFlow> builder)
         {
             builder.Property(o => o.Id)
                 .UseHiLo("financialflowseq");
@@ -18,7 +19,7 @@ namespace Demo.FinancialFlow.Infrastructure.Configurations
                 .HasMaxLength(20)
                 .HasConversion(
                     v => v.ToString(),
-                    v => Enum.Parse<Domain.FlowType>(v)
+                    v => Enum.Parse<FlowType>(v)
                 );
 
             builder.Property(x => x.Amount).IsRequired();
