@@ -15,6 +15,16 @@ namespace Demo.FinancialFlow.Api
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             builder.Services.AddDbContext<FinancialFlowContext>(options =>
             {
                 var currentLogLevel = builder.Configuration.GetValue<LogLevel>("Logging:LogLevel:Microsoft.EntityFrameworkCore");
@@ -52,6 +62,11 @@ namespace Demo.FinancialFlow.Api
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseCors("AllowAll");
+            }
 
             app.MapControllers();
 
