@@ -5,7 +5,7 @@
     /// 
     /// It circumvent a bug that occurs with swagger UI where IFormFile route argument cannot be rendered
     /// </summary>
-    public class FinancialFlowFileDto
+    public class FinancialFlowFile
     {
         public required IFormFile File { get; set; }
     }
