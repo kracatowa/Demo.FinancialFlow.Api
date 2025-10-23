@@ -1,4 +1,5 @@
-﻿using Demo.FinancialFlow.Domain.Seedwork;
+﻿using Demo.FinancialFlow.Domain.FileAggregate;
+using Demo.FinancialFlow.Domain.Seedwork;
 using Demo.FinancialFlow.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace Demo.FinancialFlow.Infrastructure
     public class FinancialFlowContext(DbContextOptions<FinancialFlowContext> dbContextOptions) : DbContext(dbContextOptions), IUnitOfWork
     {
         public DbSet<Domain.FinancialFlowAggregate.FinancialFlow> FinancialFlows { get; set; }
+        public DbSet<FinancialFlowFileAudit> FinancialFlowFileAudits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
