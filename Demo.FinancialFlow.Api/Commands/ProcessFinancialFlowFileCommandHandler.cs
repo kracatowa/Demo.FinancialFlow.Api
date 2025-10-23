@@ -1,5 +1,5 @@
 ﻿using Demo.FinancialFlow.Api.Services.File;
-using Demo.FinancialFlow.Infrastructure.Repositories;
+using Demo.FinancialFlow.Domain.FinancialFlowAggregate;
 using MediatR;
 
 namespace Demo.FinancialFlow.Api.Commands
