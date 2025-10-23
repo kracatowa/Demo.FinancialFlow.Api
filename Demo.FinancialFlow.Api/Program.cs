@@ -1,7 +1,11 @@
 using Demo.FinancialFlow.Api.Services;
 using Demo.FinancialFlow.Api.Services.File;
+using Demo.FinancialFlow.Domain.FileAggregate;
+using Demo.FinancialFlow.Domain.FinancialFlowAggregate;
 using Demo.FinancialFlow.Infrastructure;
 using Demo.FinancialFlow.Infrastructure.Repositories;
+using Demo.FinancialFlow.Infrastructure.Repositories.Azure;
+using Demo.FinancialFlow.Infrastructure.Repositories.Sql;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.FinancialFlow.Api
@@ -45,12 +49,18 @@ namespace Demo.FinancialFlow.Api
                 }
             });
 
+            builder.Services.Configure<AzureStorageSettings>(
+                builder.Configuration.GetSection("AzureStorage"));
+
             builder.Services.AddHostedService<MigrationHostedService<FinancialFlowContext>>();
 
             builder.Services.AddScoped<IFileProcessor, FileProcessingService>();
             builder.Services.AddScoped<FileProcessorFactory>();
             builder.Services.AddScoped<ProcessCsvFinancialFlow>();
             builder.Services.AddScoped<IFinancialFlowRepository, SqlFinancialFlowRepository>();
+            builder.Services.AddScoped<IFinancialFlowFileAuditRepository, SqlFinancialFlowFileAuditRepository>();
+
+            builder.Services.AddScoped<IStorageService, AzureStorageService>();
 
             builder.Services.AddMediatR(cfg =>
             {
