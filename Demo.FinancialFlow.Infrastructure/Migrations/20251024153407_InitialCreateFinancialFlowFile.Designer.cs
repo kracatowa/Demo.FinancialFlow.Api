@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Demo.FinancialFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(FinancialFlowContext))]
-    [Migration("20251023192510_InitialCreate-FinancialFlowFileAudit")]
-    partial class InitialCreateFinancialFlowFileAudit
+    [Migration("20251024153407_InitialCreateFinancialFlowFile")]
+    partial class InitialCreateFinancialFlowFile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Demo.FinancialFlow.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateFinancialFlowFileAudit : Migration
+    public partial class InitialCreateFinancialFlowFile : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
