@@ -18,6 +18,8 @@ namespace Demo.FinancialFlow.Infrastructure.Configurations
             builder.ToTable("FinancialFlowFileAudits");
 
             builder.HasKey(x => x.Id);
+            builder.Property(o => o.Id)
+                .UseHiLo("financialfileseq");
 
             builder.Property(x => x.UserId)
                 .IsRequired()
@@ -42,7 +44,7 @@ namespace Demo.FinancialFlow.Infrastructure.Configurations
 #pragma warning restore CS8603 // Possible null reference return.
 
             builder.Property(x => x.CreationDate)
-                .IsRequired();
+                .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }
