@@ -1,0 +1,19 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: storageservice
+spec:
+  type: bindings.azure.blobstorage
+  version: v1
+  metadata:
+  - name: accountName
+    secretKeyRef:
+      name: azureBlobAccountName
+  - name: accountKey
+    secretKeyRef:
+      name: azureBlobAccountKey
+  - name: containerName
+    secretKeyRef:
+      name: azureBlobContainerName
+auth:
+  secretStore: local-secret-store
