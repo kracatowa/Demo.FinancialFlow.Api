@@ -76,3 +76,5 @@ TestResults/
 
 # Publish output
 publish/
+/notepersonnel.txt
+/components/azuresecrets.json

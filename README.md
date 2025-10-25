@@ -1,4 +1,5 @@
 # Demo.FinancialFlow.Api
+
 Backend for a treasury analysis SaaS
 
 ## Architecture
@@ -32,3 +33,18 @@ A relational SQL database is used for data persistence.
 - Body: `multipart/form-data` with a file field named `File`
 - Accepts: `.csv` files up to 10MB
 - Returns: `true` on success, error message otherwise
+
+## Cloud Agnostic
+
+### Running the Project with Dapr
+
+To start the API with Dapr sidecar and load the required components, use the following command from the project root:
+
+dapr run --app-id financialflowapi --app-port 5000 --resources-path ./components -- dotnet run --project Demo.FinancialFlow.Api/Demo.FinancialFlow.Api.csproj
+
+This will:
+- Start the Dapr sidecar with your configured components (in the `./components` directory)
+- Launch the API on port 5000
+- Register the app with Dapr as `financialflowapi`
+
+Make sure you have Dapr installed and initialized before running this command.
