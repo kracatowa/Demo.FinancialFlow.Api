@@ -76,3 +76,8 @@ TestResults/
 
 # Publish output
 publish/
+
+# Dapr secrets
+components/azuresecrets.json
+
+/notepersonnel.txt
