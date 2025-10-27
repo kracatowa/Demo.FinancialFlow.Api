@@ -1,4 +1,7 @@
+using Dapr;
 using Dapr.Client;
+using Demo.FinancialFlow.Api.Controllers.Dto;
+using Demo.FinancialFlow.Api.Controllers.Validations;
 using Demo.FinancialFlow.Api.Services;
 using Demo.FinancialFlow.Api.Services.File;
 using Demo.FinancialFlow.Domain.FileAggregate;
@@ -7,7 +10,9 @@ using Demo.FinancialFlow.Infrastructure;
 using Demo.FinancialFlow.Infrastructure.Repositories;
 using Demo.FinancialFlow.Infrastructure.Repositories.Dapr;
 using Demo.FinancialFlow.Infrastructure.Repositories.Sql;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 
 namespace Demo.FinancialFlow.Api
 {
@@ -17,6 +22,10 @@ namespace Demo.FinancialFlow.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddValidatorsFromAssemblyContaining<UploadFileRequestValidator>();
+
+            builder.Services.AddMvc();
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen();
 
@@ -58,8 +67,26 @@ namespace Demo.FinancialFlow.Api
             builder.Services.AddScoped<IFinancialFlowRepository, SqlFinancialFlowRepository>();
             builder.Services.AddScoped<IFinancialFlowFileAuditRepository, SqlFinancialFlowFileAuditRepository>();
 
-            builder.Services.AddSingleton(_ => new DaprClientBuilder().Build());
+            builder.Services.AddSingleton(_ => new DaprClientBuilder()
+                                                 .UseHttpEndpoint("http://localhost:3500")
+                                                 .Build());
             builder.Services.AddScoped<IStorageService, DaprStorageService>();
+            builder.Services.AddScoped<IValidator<UploadFileRequest>, UploadFileRequestValidator>();
+
+            builder.Services.AddSingleton(sp =>
+                Policy
+                    .Handle<DaprException>()
+                    .Or<Exception>()
+                    .WaitAndRetryAsync(
+                        3,
+                        attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+                        (exception, timeSpan, retryCount, context) =>
+                        {
+                            var logger = sp.GetRequiredService<ILogger<DaprStorageService>>();
+                            logger.LogWarning(exception, "Retry {RetryCount} for Dapr operation due to: {Message}", retryCount, exception.Message);
+                        }
+                    )
+);
 
             builder.Services.AddMediatR(cfg =>
             {

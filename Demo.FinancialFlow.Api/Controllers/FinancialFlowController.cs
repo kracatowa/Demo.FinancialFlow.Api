@@ -1,14 +1,16 @@
 ﻿using Demo.FinancialFlow.Api.Commands;
 using Demo.FinancialFlow.Api.Controllers.Dto;
 using Demo.FinancialFlow.Infrastructure;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.FinancialFlow.Api.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
-    public class FinancialFlowController(FinancialFlowContext dbContext, IMediator mediator) : ControllerBase
+    public class FinancialFlowController(FinancialFlowContext dbContext, IMediator mediator, IValidator<UploadFileRequest> uploadFileRequestValidator) : ControllerBase
     {
         [HttpPost("upload/start")]
         public async Task<IActionResult> StartUploadFile([FromForm] StartFinancialFlowFile startFinancialFlowFile)
@@ -33,7 +35,7 @@ namespace Demo.FinancialFlow.Api.Controllers
 
             var result = await mediator.Send(startFinancialFlowFileCommand);
 
-            if(result is false)
+            if (result is false)
             {
                 return BadRequest("File upload failed.");
             }
@@ -42,12 +44,16 @@ namespace Demo.FinancialFlow.Api.Controllers
         }
 
         [HttpPost("upload/process")]
-        public async Task<IActionResult> UploadFile([FromForm] FinancialFlowFile financialFlowFile)
+        public async Task<IActionResult> UploadFile([FromBody] UploadFileRequest request)
         {
-            var file = financialFlowFile.File;
+            uploadFileRequestValidator.ValidateAndThrow(request);
 
-            var processFinancialFlowFileCommand = new ProcessFinancialFlowFileCommand(file);
+            var filename = request.Subject.Split('/').Last();
 
+            var filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+            var extension = Path.GetExtension(filename).ToLowerInvariant();
+
+            var processFinancialFlowFileCommand = new ProcessFinancialFlowFileCommand(Guid.Parse(filenameWithoutExtension), extension, filename);
             await mediator.Send(processFinancialFlowFileCommand);
 
             return Ok(true);
@@ -58,7 +64,6 @@ namespace Demo.FinancialFlow.Api.Controllers
         {
             var flows = dbContext.FinancialFlows.AsNoTracking().AsQueryable();
 
-            // Filtering
             if (query.MinAmount.HasValue)
                 flows = flows.Where(f => f.Amount >= query.MinAmount.Value);
             if (query.MaxAmount.HasValue)
@@ -74,14 +79,12 @@ namespace Demo.FinancialFlow.Api.Controllers
             if (!string.IsNullOrEmpty(query.Subsidiairy))
                 flows = flows.Where(f => f.Subsidiairy == query.Subsidiairy);
 
-            // Pagination
             var totalCount = await flows.CountAsync();
             var items = await flows
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToListAsync();
 
-            // Optionally, return totalCount for client-side paging
             return Ok(new { totalCount, items });
         }
     }

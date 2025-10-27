@@ -14,7 +14,7 @@
             return extension.ToLower() switch
             {
                 ".csv" => _provider.GetRequiredService<ProcessCsvFinancialFlow>(),
-                _ => throw new NotSupportedException("File type not supported")
+                _ => throw new NotSupportedException($"File type not supported : {extension}")
             };
         }
     }
