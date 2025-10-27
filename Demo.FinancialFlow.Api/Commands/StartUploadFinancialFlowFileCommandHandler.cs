@@ -11,10 +11,11 @@ namespace Demo.FinancialFlow.Api.Commands
             var storageFileId = Guid.NewGuid();
 
             var financialFlowFileAudit = new FinancialFlowFileAudit(request.UserId, request.File.FileName, storageFileId);
+            var extension = Path.GetExtension(request.File.FileName).ToLowerInvariant();
 
             try
             {
-                storageService.UploadFile(storageFileId.ToString(), request.File.OpenReadStream());
+                storageService.UploadFile($"{storageFileId}{extension}", request.File.OpenReadStream());
             }
             catch (Exception)
             {

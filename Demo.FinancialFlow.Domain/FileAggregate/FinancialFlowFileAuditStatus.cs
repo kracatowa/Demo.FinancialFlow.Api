@@ -3,7 +3,7 @@
     public enum FinancialFlowFileAuditStatus
     {
         Start,
-        Processing,
+        Processed,
         Completed,
         Failed
     }
