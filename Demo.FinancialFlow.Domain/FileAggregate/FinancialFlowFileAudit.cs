@@ -23,5 +23,10 @@ namespace Demo.FinancialFlow.Domain.FileAggregate
         {
             FinancialFlowFileAudits.Add(FinancialFlowFileAuditStatus.Failed);
         }
+
+        public void MarkAsProcessed()
+        {
+            FinancialFlowFileAudits.Add(FinancialFlowFileAuditStatus.Processed);
+        }
     }
 }
