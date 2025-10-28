@@ -50,6 +50,16 @@ A relational SQL database is used for data persistence.
   - `Subsidiary`
 - Returns: { "totalCount": <int>, "items": [ ... ] }
 
+### Query Financial Flow File Audits
+`GET /api/financialflowfileaudit`
+- Query parameters (all optional except paging):
+  - `PageNumber` (default: 1): Page number for pagination.
+  - `PageSize` (default: 10): Number of items per page.
+  - `FromDate`: Filter audits created on or after this date (`yyyy-MM-dd`).
+  - `ToDate`: Filter audits created on or before this date (`yyyy-MM-dd`).
+  - `Filename`: Partial match filter for the file name.
+- Returns: `{ "totalCount": <int>, "items": [ ... ] }`
+
 ## Cloud Agnostic
 
 ### Running the Project with Dapr
