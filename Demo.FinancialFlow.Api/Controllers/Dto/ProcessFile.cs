@@ -1,6 +1,6 @@
 ﻿namespace Demo.FinancialFlow.Api.Controllers.Dto
 {
-    public class UploadFileRequest
+    public class ProcessFile
     {
         public required string Subject { get; set; }
     }

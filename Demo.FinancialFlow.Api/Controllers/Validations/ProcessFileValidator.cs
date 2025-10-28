@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Demo.FinancialFlow.Api.Controllers.Validations
 {
-    public class UploadFileRequestValidator : AbstractValidator<UploadFileRequest>
+    public class ProcessFileValidator : AbstractValidator<ProcessFile>
     {
-        public UploadFileRequestValidator()
+        public ProcessFileValidator()
         {
             RuleFor(x => x.Subject)
                 .NotEmpty().WithMessage("Cloud event subject is null or empty.")
