@@ -4,6 +4,7 @@ using Demo.FinancialFlow.Api.Controllers.Dto;
 using Demo.FinancialFlow.Api.Controllers.Validations;
 using Demo.FinancialFlow.Api.Services;
 using Demo.FinancialFlow.Api.Services.File;
+using Demo.FinancialFlow.Api.Services.File.Processors;
 using Demo.FinancialFlow.Domain.FileAggregate;
 using Demo.FinancialFlow.Domain.FinancialFlowAggregate;
 using Demo.FinancialFlow.Infrastructure;
@@ -13,6 +14,7 @@ using Demo.FinancialFlow.Infrastructure.Repositories.Sql;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Polly;
+using System.Reflection;
 
 namespace Demo.FinancialFlow.Api
 {
@@ -23,10 +25,11 @@ namespace Demo.FinancialFlow.Api
             var builder = WebApplication.CreateBuilder(args);
 
 
-            builder.Services.AddValidatorsFromAssemblyContaining<UploadFileRequestValidator>();
-
             builder.Services.AddMvc();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidateModelAttribute>();
+            });
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddCors(options =>
@@ -61,9 +64,9 @@ namespace Demo.FinancialFlow.Api
 
             builder.Services.AddHostedService<MigrationHostedService<FinancialFlowContext>>();
 
-            builder.Services.AddScoped<IFileProcessor, FileProcessingService>();
+            builder.Services.AddScoped<IFileProcessorService, FileProcessorService>();
             builder.Services.AddScoped<FileProcessorFactory>();
-            builder.Services.AddScoped<ProcessCsvFinancialFlow>();
+            builder.Services.AddScoped<IFileProcessor, ProcessCsvFinancialFlow>();
             builder.Services.AddScoped<IFinancialFlowRepository, SqlFinancialFlowRepository>();
             builder.Services.AddScoped<IFinancialFlowFileAuditRepository, SqlFinancialFlowFileAuditRepository>();
 
@@ -71,7 +74,6 @@ namespace Demo.FinancialFlow.Api
                                                  .UseHttpEndpoint("http://localhost:3500")
                                                  .Build());
             builder.Services.AddScoped<IStorageService, DaprStorageService>();
-            builder.Services.AddScoped<IValidator<UploadFileRequest>, UploadFileRequestValidator>();
 
             builder.Services.AddSingleton(sp =>
                 Policy
@@ -92,6 +94,7 @@ namespace Demo.FinancialFlow.Api
             {
                 cfg.RegisterServicesFromAssemblyContaining<Program>();
             });
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             var app = builder.Build();
 

@@ -1,4 +1,5 @@
-﻿using Demo.FinancialFlow.Domain.FinancialFlowAggregate;
+﻿using Demo.FinancialFlow.Domain.FileAggregate;
+using Demo.FinancialFlow.Domain.FinancialFlowAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,6 +27,13 @@ namespace Demo.FinancialFlow.Infrastructure.Configurations
             builder.Property(x => x.TransactionDate).IsRequired();
             builder.Property(x => x.Description).HasMaxLength(500);
             builder.Property(x => x.Subsidiairy).HasMaxLength(100);
+
+            builder
+                .HasOne<FinancialFlowFileAudit>()
+                .WithMany()
+                .HasForeignKey(f => f.StorageFileId)
+                .HasPrincipalKey(fa => fa.StorageFileId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

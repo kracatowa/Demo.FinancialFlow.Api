@@ -7,14 +7,15 @@
         public required string Description { get; set; }
         public required string FlowType { get; set; }
         public required string Subsidiairy { get; set; }
-        public FinancialFlow ToDomainModel()
+        public FinancialFlow ToDomainModel(Guid fileStorageId)
         {
             return new FinancialFlow(
                 Amount,
                 TransactionDate,
                 Description,
                 Enum.Parse<FlowType>(FlowType),
-                Subsidiairy
+                Subsidiairy,
+                fileStorageId
             );
         }
 
