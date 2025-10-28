@@ -2,18 +2,36 @@
 using System.Globalization;
 using System.Text;
 
-namespace Demo.FinancialFlow.Api.Services.File
+namespace Demo.FinancialFlow.Api.Services.File.Processors
 {
     public class ProcessCsvFinancialFlow(ILogger<ProcessCsvFinancialFlow> logger) : IFileProcessor
     {
-        public List<Domain.FinancialFlowAggregate.FinancialFlow> ProcessFinancialFlow(MemoryStream stream, string extension)
+        public List<Domain.FinancialFlowAggregate.FinancialFlow> ProcessFinancialFlow(MemoryStream stream, Guid fileStorageId)
         {
             var result = new List<Domain.FinancialFlowAggregate.FinancialFlow>();
             stream.Position = 0;
 
+            // Read the entire stream as a Base64 string
             using var reader = new StreamReader(stream, Encoding.UTF8, leaveOpen: true);
+            string base64Content = reader.ReadToEnd();
 
-            var header = reader.ReadLine();
+            // Decode the Base64 string to get the CSV content
+            byte[] csvBytes;
+            try
+            {
+                csvBytes = Convert.FromBase64String(base64Content);
+            }
+            catch (FormatException)
+            {
+                logger.LogError("Input stream is not valid Base64.");
+                return result;
+            }
+
+            // Create a new stream for the decoded CSV content
+            using var csvStream = new MemoryStream(csvBytes);
+            using var csvReader = new StreamReader(csvStream, Encoding.UTF8);
+
+            var header = csvReader.ReadLine();
             if (header == null)
                 return result;
 
@@ -25,9 +43,9 @@ namespace Demo.FinancialFlow.Api.Services.File
 
             char separator = hasSemicolon && !hasComma ? ';' : ',';
 
-            while (!reader.EndOfStream)
+            while (!csvReader.EndOfStream)
             {
-                var line = reader.ReadLine();
+                var line = csvReader.ReadLine();
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
@@ -52,7 +70,7 @@ namespace Demo.FinancialFlow.Api.Services.File
                 }
                 else
                 {
-                    result.Add(dto.ToDomainModel());
+                    result.Add(dto.ToDomainModel(fileStorageId));
                 }
             }
 
