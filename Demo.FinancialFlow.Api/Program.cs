@@ -14,6 +14,7 @@ using Demo.FinancialFlow.Infrastructure.Repositories.Sql;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Polly;
+using System.Reflection;
 
 namespace Demo.FinancialFlow.Api
 {
@@ -73,7 +74,6 @@ namespace Demo.FinancialFlow.Api
                                                  .UseHttpEndpoint("http://localhost:3500")
                                                  .Build());
             builder.Services.AddScoped<IStorageService, DaprStorageService>();
-            builder.Services.AddScoped<IValidator<ProcessFile>, ProcessFileValidator>();
 
             builder.Services.AddSingleton(sp =>
                 Policy
@@ -94,6 +94,7 @@ namespace Demo.FinancialFlow.Api
             {
                 cfg.RegisterServicesFromAssemblyContaining<Program>();
             });
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             var app = builder.Build();
 
