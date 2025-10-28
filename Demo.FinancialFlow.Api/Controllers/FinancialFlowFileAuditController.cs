@@ -1,11 +1,13 @@
 ﻿using Demo.FinancialFlow.Api.Commands;
 using Demo.FinancialFlow.Api.Controllers.Dto;
 using Demo.FinancialFlow.Api.Services.File;
-using Demo.FinancialFlow.Api.Services.File.Processors;
+using Demo.FinancialFlow.Domain.FileAggregate;
+using Demo.FinancialFlow.Infrastructure;
 using Demo.FinancialFlow.Infrastructure.Repositories;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Demo.FinancialFlow.Api.Controllers
 {
@@ -13,7 +15,8 @@ namespace Demo.FinancialFlow.Api.Controllers
     public class FinancialFlowFileAuditController(IMediator mediator,
                                                   IValidator<ProcessFile> uploadFileRequestValidator,
                                                   IStorageService storageService,
-                                                  IFileProcessorService fileProcessor) : ControllerBase
+                                                  IFileProcessorService fileProcessor,
+                                                  FinancialFlowContext dbContext) : ControllerBase
     {
         [HttpPost("upload/start")]
         public async Task<IActionResult> StartUploadFile([FromForm] StartFinancialFlowFile startFinancialFlowFile)
@@ -51,7 +54,7 @@ namespace Demo.FinancialFlow.Api.Controllers
         {
             var validationResult = uploadFileRequestValidator.Validate(processFile);
 
-            if(!validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -69,6 +72,29 @@ namespace Demo.FinancialFlow.Api.Controllers
             await mediator.Send(processFinancialFlowFileCommand);
 
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FinancialFlowFileAudit>>> Get([FromQuery] FinancialFlowFileQuery query)
+        {
+            var flows = dbContext.FinancialFlowFileAudits.AsNoTracking().AsQueryable();
+
+            if (query.FromDate.HasValue)
+                flows = flows.Where(f => f.CreationDate >= query.FromDate.Value);
+
+            if (query.ToDate.HasValue)
+                flows = flows.Where(f => f.CreationDate <= query.ToDate.Value);
+
+            if (!string.IsNullOrWhiteSpace(query.Filename))
+                flows = flows.Where(f => f.Filename.Contains(query.Filename));
+
+            var totalCount = await flows.CountAsync();
+            var items = await flows
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync();
+
+            return Ok(new { totalCount, items });
         }
     }
 }
