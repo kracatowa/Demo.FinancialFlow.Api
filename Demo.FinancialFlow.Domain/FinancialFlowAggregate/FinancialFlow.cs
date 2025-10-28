@@ -22,11 +22,6 @@ namespace Demo.FinancialFlow.Domain.FinancialFlowAggregate
         }
 
         protected FinancialFlow() { }
-
-        public void SetFinancialFlowFileId(Guid fileId)
-        {
-            StorageFileId = fileId;
-        }
     }
 
 }
