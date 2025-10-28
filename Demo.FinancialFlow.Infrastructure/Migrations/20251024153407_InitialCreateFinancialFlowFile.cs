@@ -22,7 +22,7 @@ namespace Demo.FinancialFlow.Infrastructure.Migrations
                     Filename = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StorageFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FinancialFlowFileAudits = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
